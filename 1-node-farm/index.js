@@ -1,5 +1,6 @@
 const fs = require("fs");
 const http = require("http");
+const url = require("url");
 
 //////////////////////////////////////////////////
 // FILES
@@ -70,10 +71,10 @@ const data = fs.readFileSync(
 const dataObj = JSON.parse(data);
 
 const server = http.createServer((req, res) => {
-  const pathName = req.url;
+  const { query, pathname } = url.parse(req.url, true);
 
   // Overview page
-  if (pathName === "/" || pathName === "/overview") {
+  if (pathname === "/" || pathname === "/overview") {
     res.writeHead(200, { "Content-type": "text/html" });
 
     const cardsHtml = dataObj
@@ -84,11 +85,16 @@ const server = http.createServer((req, res) => {
 
     res.end(output);
     // Product page
-  } else if (pathName === "/product") {
-    res.end("This is the product.");
+  } else if (pathname === "/product") {
+    res.writeHead(200, { "Content-type": "text/html" });
+
+    const product = dataObj[query.id];
+    const output = replaceTemplate(tempProduct, product);
+
+    res.end(output);
 
     // API
-  } else if (pathName === "/api") {
+  } else if (pathname === "/api") {
     res.writeHead(200, { "Content-type": "application/json" });
     res.end(data);
 
@@ -100,8 +106,6 @@ const server = http.createServer((req, res) => {
     });
     res.end("<h1>Page not found.</h1>");
   }
-
-  console.log(req);
 });
 
 server.listen(8000, "127.0.0.1", () => {
