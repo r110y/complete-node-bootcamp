@@ -77,11 +77,16 @@ const server = http.createServer((req, res) => {
     res.end(output);
     // Product page
   } else if (pathname === '/product') {
-    res.writeHead(200, { 'Content-type': 'text/html' });
-
     const product = dataObj[query.id];
-    const output = replaceTemplate(tempProduct, product);
 
+    if (!product) {
+      res.writeHead(404, { 'Content-type': 'text/html' });
+      res.end('<h1>Product not found</h1>');
+      return;
+    }
+
+    res.writeHead(200, { 'Content-type': 'text/html' });
+    const output = replaceTemplate(tempProduct, product);
     res.end(output);
 
     // API
