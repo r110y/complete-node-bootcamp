@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
+const validator = require('validator');
 
 const tourSchema = new mongoose.Schema(
   {
@@ -8,6 +9,18 @@ const tourSchema = new mongoose.Schema(
       required: [true, 'A tour must have a name'],
       unique: true,
       trim: true,
+      maxlength: [
+        40,
+        'A tour name must have 40 characters or less',
+      ],
+      minlength: [
+        10,
+        'A tour name must have 10 characters or more',
+      ],
+      // validate: [
+      //   validator.isAlpha,
+      //   'A name must be alphabetical',
+      // ],
     },
     slug: String,
     duration: {
@@ -24,10 +37,16 @@ const tourSchema = new mongoose.Schema(
     difficulty: {
       type: String,
       required: [true, 'A tour must have a difficulty'],
+      enum: {
+        values: ['easy', 'medium', 'difficult'],
+        message: 'Difficulty must be easy, medium or hard.',
+      },
     },
     ratingsAverage: {
       type: Number,
       default: 4.5,
+      min: [1, 'Ratings must be at least 1.0'],
+      max: [5, 'Ratings cannot be higher than 5.0'],
     },
     ratingsQuantity: {
       type: Number,
@@ -37,7 +56,17 @@ const tourSchema = new mongoose.Schema(
       type: Number,
       required: [true, 'A tour must have a price'],
     },
-    priceDiscount: Number,
+    priceDiscount: {
+      type: Number,
+      validate: {
+        validator: function (val) {
+          // this only points to current doc on NEW document creation
+          return val <= this.price;
+        },
+        message:
+          'Discount ({VALUE}) should be smaller than regular price',
+      },
+    },
     summary: {
       type: String,
       trim: true,
@@ -104,7 +133,15 @@ tourSchema.post(/^find/, function (docs, next) {
   console.log(
     `Query took ${Date.now() - this.start} milliseconds`,
   );
-  console.log(docs);
+  // console.log(docs);
+  next();
+});
+
+// Aggregation middleware
+tourSchema.pre('aggregate', function (next) {
+  this.pipeline().unshift({
+    $match: { secretTour: { $ne: true } },
+  });
   next();
 });
 
