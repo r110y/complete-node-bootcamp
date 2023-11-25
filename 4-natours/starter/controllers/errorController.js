@@ -37,7 +37,7 @@ const sendErrorProd = (err, res) => {
       status: err.status,
       message: err.message,
     });
-    // Programming or other unknown error: don't leak details to cient.
+    // Programming or other unknown error: don't leak details to client.
   } else {
     // 1) log error
     // console.error('--- ERROR --- :', err);
@@ -45,7 +45,7 @@ const sendErrorProd = (err, res) => {
     // 2) Send generic message
     res.status(500).json({
       status: 'Error',
-      message: 'Something went very wrong.',
+      message: err.message,
     });
   }
 };
@@ -61,11 +61,13 @@ module.exports = (err, req, res, next) => {
   } else if (process.env.NODE_ENV === 'production') {
     let error = { ...err };
 
+    console.log(error);
+
     if (error.name === 'CastError')
       error = handleCastErrorDB(error);
     if (error.code === 11000)
       error = handleDuplicateFieldsDB(error);
-    if (error.name === 'ValidationError')
+    if (error._message === 'Validation failed')
       error = handleValidationErrorDB(error);
 
     sendErrorProd(error, res);
