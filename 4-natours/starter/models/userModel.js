@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-const slugify = require('slugify');
 const validator = require('validator');
+const bcrypt = require('bcryptjs');
 
 // name, email, photo, password, passwordConfirm
 
@@ -52,6 +52,20 @@ const userSchema = new mongoose.Schema({
       message: 'Passwords do not match',
     },
   },
+});
+
+userSchema.pre('save', async function (next) {
+  // Only run when password is modified
+  if (!this.isModified('password')) return next();
+
+  // Encrypt password with cost of 12
+  this.password = await bcrypt.hash(this.password, 12);
+
+  // Delete the password confirm field so it doesn't persist to database
+  this.passwordConfirm = undefined;
+
+  // Call the next middleware in the stack
+  next();
 });
 
 const User = mongoose.model('User', userSchema);
