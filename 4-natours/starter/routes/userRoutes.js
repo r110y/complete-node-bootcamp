@@ -15,10 +15,16 @@ router.patch(
   '/resetPassword/:token',
   authController.resetPassword,
 );
+
 router.patch(
   '/changePassword',
   authController.protect,
   authController.changePassword,
+);
+router.patch(
+  '/updateMe',
+  authController.protect,
+  userController.updateMe,
 );
 
 router
