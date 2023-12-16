@@ -5,69 +5,75 @@ const bcrypt = require('bcryptjs');
 
 // name, email, photo, password, passwordConfirm
 
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, 'A user must have a name'],
-    minlength: [
-      4,
-      'A username must have at least 4 characters',
-    ],
-    maxlength: [
-      32,
-      'A username must not exceed 32 characters',
-    ],
-  },
-  email: {
-    type: String,
-    required: [
-      true,
-      'A user must have a valid email address',
-    ],
-    unique: [
-      true,
-      'A user is already registered with this email',
-    ],
-    validate: [
-      validator.isEmail,
-      'Please provide a valid email address',
-    ],
-    lowercase: true,
-  },
-  photo: String,
-  role: {
-    type: String,
-    enum: ['user', 'guide', 'lead-guide', 'admin'],
-    default: 'user',
-  },
-  password: {
-    type: String,
-    minlength: [
-      8,
-      'A password must have at least 8 characters',
-    ],
-    select: false,
-  },
-  passwordConfirm: {
-    type: String,
-    required: [true, 'Please confirm your password'],
-    validate: {
-      // This only works on 'CREATE' + 'SAVE'
-      validator: function (el) {
-        return el === this.password;
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: [true, 'A user must have a name'],
+      minlength: [
+        4,
+        'A username must have at least 4 characters',
+      ],
+      maxlength: [
+        32,
+        'A username must not exceed 32 characters',
+      ],
+    },
+    email: {
+      type: String,
+      required: [
+        true,
+        'A user must have a valid email address',
+      ],
+      unique: [
+        true,
+        'A user is already registered with this email',
+      ],
+      validate: [
+        validator.isEmail,
+        'Please provide a valid email address',
+      ],
+      lowercase: true,
+    },
+    photo: String,
+    role: {
+      type: String,
+      enum: ['user', 'guide', 'lead-guide', 'admin'],
+      default: 'user',
+    },
+    password: {
+      type: String,
+      minlength: [
+        8,
+        'A password must have at least 8 characters',
+      ],
+      select: false,
+    },
+    passwordConfirm: {
+      type: String,
+      required: [true, 'Please confirm your password'],
+      validate: {
+        // This only works on 'CREATE' + 'SAVE'
+        validator: function (el) {
+          return el === this.password;
+        },
+        message: 'Passwords do not match',
       },
-      message: 'Passwords do not match',
+    },
+    passwordChangedAt: Date,
+    passwordResetToken: String,
+    passwordResetTokenExpiry: Date,
+    isActive: {
+      type: Boolean,
+      default: true,
+      select: false,
     },
   },
-  passwordChangedAt: Date,
-  passwordResetToken: String,
-  passwordResetTokenExpiry: Date,
-  isActive: {
-    type: Boolean,
-    default: true,
-    select: false,
+  {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   },
-});
+);
 
 userSchema.pre('save', async function (next) {
   // Only run when password is modified

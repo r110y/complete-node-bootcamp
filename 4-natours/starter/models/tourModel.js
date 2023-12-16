@@ -86,7 +86,7 @@ const tourSchema = new mongoose.Schema(
     },
     createdAt: {
       type: Date,
-      default: Date.now(),
+      default: Date.now,
       select: false,
     },
     startDates: [Date],
@@ -164,12 +164,12 @@ tourSchema.pre(/^find/, function (next) {
   next();
 });
 
-// access to all docs returned from query
-tourSchema.post(/^find/, function (docs, next) {
-  console.log(
-    `Query took ${Date.now() - this.start} milliseconds`,
-  );
-  // console.log(docs);
+// Populate tours with referenced data
+tourSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'guides',
+    select: '-__v',
+  });
   next();
 });
 
@@ -178,6 +178,15 @@ tourSchema.pre('aggregate', function (next) {
   this.pipeline().unshift({
     $match: { secretTour: { $ne: true } },
   });
+  next();
+});
+
+// Testing middleware?
+tourSchema.post(/^find/, function (docs, next) {
+  console.log(
+    `Query took ${Date.now() - this.start} milliseconds`,
+  );
+  // console.log(docs);
   next();
 });
 
