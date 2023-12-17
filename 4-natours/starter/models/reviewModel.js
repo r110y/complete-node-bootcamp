@@ -18,6 +18,7 @@ const reviewSchema = new mongoose.Schema(
     createdAt: {
       type: Date,
       default: Date.now,
+      enum: [Date.now],
       select: false,
     },
     author: [
