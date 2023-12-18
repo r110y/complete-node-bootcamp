@@ -52,12 +52,17 @@ const reviewSchema = new mongoose.Schema(
 // });
 
 reviewSchema.pre(/^find/, function (next) {
+  // this.populate({
+  //   path: 'author',
+  //   select: 'name id photo',
+  // }).populate({
+  //   path: 'tour',
+  //   select: '-guides name',
+  // });
+
   this.populate({
     path: 'author',
-    select: 'name id photo',
-  }).populate({
-    path: 'tour',
-    select: '-guides name',
+    select: 'name photo',
   });
   next();
 });
