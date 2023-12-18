@@ -18,7 +18,14 @@ exports.getAllReviews = catchAsync(
 );
 
 exports.getReview = catchAsync(async (req, res, next) => {
-  const review = await Review.findById(req.params.id);
+  let filter = {};
+  if (req.params.tourId) {
+    filter = { tour: req.params.tourId };
+  } else {
+    filter = req.params.id;
+  }
+
+  const review = await Review.findById(filter);
 
   if (!review) {
     next(new AppError('No review found with that ID', 404));
@@ -35,6 +42,9 @@ exports.getReview = catchAsync(async (req, res, next) => {
 
 exports.createReview = catchAsync(
   async (req, res, next) => {
+    if (!req.body.tour) req.body.tour = req.params.tourId;
+    if (!req.body.user) req.body.user = req.user.id;
+
     const newReview = await Review.create({
       contents: req.body.contents,
       rating: req.body.rating,

@@ -2,7 +2,8 @@ const express = require('express');
 const reviewController = require('./../controllers/reviewController');
 const authController = require('./../controllers/authController');
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
+// merge params allows access to params when coming from the tour routes
 
 router
   .route('/')
@@ -25,6 +26,17 @@ router
   .delete(
     authController.protect,
     reviewController.deleteReview,
+  );
+
+// POST /tour/1234/reviews
+// GET /tour/1234/reviews
+// GET /tour/1234/reviews/5678
+
+router
+  .route('/:tourId/reviews')
+  .post(
+    authController.protect,
+    reviewController.createReview,
   );
 
 module.exports = router;
