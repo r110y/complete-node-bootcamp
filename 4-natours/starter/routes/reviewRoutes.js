@@ -21,10 +21,12 @@ router
   .get(authController.protect, reviewController.getReview)
   .patch(
     authController.protect,
+    authController.checkReviewer,
     reviewController.updateReview,
   )
   .delete(
     authController.protect,
+    authController.checkReviewer,
     reviewController.deleteReview,
   );
 

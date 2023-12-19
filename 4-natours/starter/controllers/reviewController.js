@@ -2,6 +2,7 @@ const Review = require('./../models/reviewModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const filterObj = require('../utils/filterObj');
+const factory = require('./handlerFactory');
 
 exports.getAllReviews = catchAsync(
   async (req, res, next) => {
@@ -101,30 +102,22 @@ exports.updateReview = catchAsync(
   },
 );
 
-exports.deleteReview = catchAsync(
-  async (req, res, next) => {
-    if (req.body.author !== req.user.id) {
-      return next(
-        new AppError(
-          'You can only delete your own reviews',
-          401,
-        ),
-      );
-    }
+exports.deleteReview = factory.deleteOne(Review);
+// exports.deleteReview = catchAsync(
+//   async (req, res, next) => {
+//     const review = await Review.findByIdAndDelete(
+//       req.params.id,
+//     );
 
-    const review = await Review.findByIdAndDelete(
-      req.params.id,
-    );
+//     if (!review) {
+//       next(
+//         new AppError('No review found with that ID', 404),
+//       );
+//     }
 
-    if (!review) {
-      next(
-        new AppError('No review found with that ID', 404),
-      );
-    }
-
-    res.status(204).json({
-      status: 'success',
-      data: null,
-    });
-  },
-);
+//     res.status(204).json({
+//       status: 'success',
+//       data: null,
+//     });
+//   },
+// );

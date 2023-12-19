@@ -168,6 +168,20 @@ exports.restrictTo =
     next();
   };
 
+exports.checkReviewer = catchAsync(
+  async (req, res, next) => {
+    if (req.body.author !== req.user.id) {
+      return next(
+        new AppError(
+          'You can only amend and delete your own reviews',
+          401,
+        ),
+      );
+    }
+    next();
+  },
+);
+
 exports.forgotPassword = catchAsync(
   async (req, res, next) => {
     // 1) Get user based on POSTed email
