@@ -38,6 +38,8 @@ router
   .route('/:tourId/reviews')
   .post(
     authController.protect,
+    reviewController.setTourUserIds,
+    authController.checkReviewer,
     reviewController.createReview,
   );
 

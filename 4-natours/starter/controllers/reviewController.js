@@ -18,6 +18,13 @@ exports.getAllReviews = catchAsync(
   },
 );
 
+exports.setTourUserIds = (req, res, next) => {
+  if (!req.body.tour) req.body.tour = req.params.tourId;
+  if (!req.body.author) req.body.author = req.user.id;
+  console.log(req.user.id);
+  next();
+};
+
 exports.getReview = catchAsync(async (req, res, next) => {
   let filter = {};
   if (req.params.tourId) {
@@ -41,83 +48,8 @@ exports.getReview = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.createReview = catchAsync(
-  async (req, res, next) => {
-    if (!req.body.tour) req.body.tour = req.params.tourId;
-    if (!req.body.user) req.body.user = req.user.id;
+exports.createReview = factory.createOne(Review);
 
-    const newReview = await Review.create({
-      contents: req.body.contents,
-      rating: req.body.rating,
-      createdAt: req.body.createdAt,
-      author: req.user.id,
-      tour: req.body.tour,
-    });
-
-    res.status(201).json({
-      status: 'success',
-      data: {
-        newReview,
-      },
-    });
-  },
-);
-
-exports.updateReview = catchAsync(
-  async (req, res, next) => {
-    if (req.body.author !== req.user.id) {
-      return next(
-        new AppError(
-          'You can only update your own reviews.',
-          401,
-        ),
-      );
-    }
-
-    const filteredBody = filterObj(
-      req.body,
-      'contents',
-      'rating',
-    );
-
-    const updatedReview = await Review.findByIdAndUpdate(
-      req.params.id,
-      filteredBody,
-      { new: true, runValidators: true },
-    );
-
-    if (!updatedReview) {
-      next(
-        new AppError('No review found with that ID', 404),
-      );
-      return;
-    }
-
-    res.status(200).json({
-      status: 'success',
-      data: {
-        updatedReview,
-      },
-    });
-  },
-);
+exports.updateReview = factory.updateOne(Review);
 
 exports.deleteReview = factory.deleteOne(Review);
-// exports.deleteReview = catchAsync(
-//   async (req, res, next) => {
-//     const review = await Review.findByIdAndDelete(
-//       req.params.id,
-//     );
-
-//     if (!review) {
-//       next(
-//         new AppError('No review found with that ID', 404),
-//       );
-//     }
-
-//     res.status(204).json({
-//       status: 'success',
-//       data: null,
-//     });
-//   },
-// );

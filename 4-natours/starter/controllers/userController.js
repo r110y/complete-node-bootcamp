@@ -1,4 +1,4 @@
-const User = require('./../models/userModel');
+const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const filterObj = require('../utils/filterObj');
@@ -16,13 +16,6 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
     },
   });
 });
-
-exports.createUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet implemented',
-  });
-};
 
 exports.updateMe = catchAsync(async (req, res, next) => {
   // 1) Create error if user POSTs password data (and also prevent role manipulation)
@@ -70,12 +63,9 @@ exports.getUser = (req, res) => {
   });
 };
 
-exports.updateUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet implemented',
-  });
-};
+exports.createUser = factory.createOne(User);
+
+exports.updateUser = factory.updateOne(User);
 
 exports.deleteUser = factory.deleteOne(User);
 // exports.deleteUser = (req, res) => {

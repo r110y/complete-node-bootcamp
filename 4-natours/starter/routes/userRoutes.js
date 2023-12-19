@@ -35,12 +35,20 @@ router.delete(
 router
   .route('/')
   .get(userController.getAllUsers)
-  .post(userController.createUser);
+  .post(
+    authController.protect,
+    authController.restrictTo('admin'),
+    userController.createUser,
+  );
 
 router
   .route('/:id')
   .get(userController.getUser)
-  .patch(userController.updateUser)
+  .patch(
+    authController.protect,
+    authController.restrictTo('admin'),
+    userController.updateUser,
+  )
   .delete(
     authController.protect,
     authController.restrictTo('admin'),
