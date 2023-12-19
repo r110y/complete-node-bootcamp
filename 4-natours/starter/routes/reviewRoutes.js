@@ -13,6 +13,7 @@ router
   )
   .post(
     authController.protect,
+    reviewController.setTourUserIds,
     reviewController.createReview,
   );
 
@@ -21,7 +22,7 @@ router
   .get(authController.protect, reviewController.getReview)
   .patch(
     authController.protect,
-    authController.checkReviewer,
+    reviewController.setTourUserIds,
     reviewController.updateReview,
   )
   .delete(

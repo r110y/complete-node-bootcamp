@@ -21,7 +21,9 @@ exports.getAllReviews = catchAsync(
 exports.setTourUserIds = (req, res, next) => {
   if (!req.body.tour) req.body.tour = req.params.tourId;
   if (!req.body.author) req.body.author = req.user.id;
-  console.log(req.user.id);
+
+  console.log(req.body);
+
   next();
 };
 

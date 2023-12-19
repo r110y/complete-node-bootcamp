@@ -63,6 +63,9 @@ reviewSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'author',
     select: 'name photo author',
+  }).populate({
+    path: 'tour',
+    select: '-guides name difficulty photo',
   });
   next();
 });
