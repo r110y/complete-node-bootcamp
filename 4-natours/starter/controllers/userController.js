@@ -4,18 +4,10 @@ const AppError = require('../utils/appError');
 const filterObj = require('../utils/filterObj');
 const factory = require('./handlerFactory');
 
-exports.getAllUsers = catchAsync(async (req, res, next) => {
-  const users = await User.find();
-
-  // SEND RESPONSE
-  res.status(200).json({
-    status: 'success',
-    results: users.length,
-    data: {
-      users,
-    },
-  });
-});
+exports.getMe = (req, res, next) => {
+  req.params.id = req.user.id;
+  next();
+};
 
 exports.updateMe = catchAsync(async (req, res, next) => {
   // 1) Create error if user POSTs password data (and also prevent role manipulation)
@@ -56,14 +48,17 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet implemented',
-  });
-};
+exports.getUser = factory.getOne(User, { path: 'reviews' });
 
-exports.createUser = factory.createOne(User);
+exports.createUser = catchAsync(async (req, res, next) => {
+  res.status(403).json({
+    status: 'fail',
+    message:
+      'This route is not implemented. Please sign up instead',
+  });
+});
+
+exports.getAllUsers = factory.getAll(User);
 
 exports.updateUser = factory.updateOne(User);
 
