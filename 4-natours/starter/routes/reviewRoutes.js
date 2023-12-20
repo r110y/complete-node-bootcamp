@@ -14,10 +14,7 @@ router
   .post(
     authController.protect,
     reviewController.setTourUserIds,
-<<<<<<< HEAD
     authController.checkReviewer,
-=======
->>>>>>> 0b108a44958716190006a86fef5ec31119c58953
     reviewController.createReview,
   );
 
