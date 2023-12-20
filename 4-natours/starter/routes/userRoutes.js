@@ -16,50 +16,35 @@ router.patch(
   authController.resetPassword,
 );
 
+// DO NOT PLACE PROTECTED ROUTES ABOVE THIS LINE
+// Protects all subsequent router middlewares in this file.
+router.use(authController.protect);
+
 router.patch(
   '/changePassword',
-  authController.protect,
   authController.changePassword,
 );
 
 router.get(
   '/me',
-  authController.protect,
   userController.getMe,
   userController.getUser,
 );
-router.patch(
-  '/updateMe',
-  authController.protect,
-  userController.updateMe,
-);
-router.delete(
-  '/deactivate',
-  authController.protect,
-  userController.deleteMe,
-);
+router.patch('/updateMe', userController.updateMe);
+router.delete('/deactivate', userController.deleteMe);
+
+// Admin restricted routes
+router.use(authController.restrictTo('admin'));
 
 router
   .route('/')
   .get(userController.getAllUsers)
-  .post(
-    authController.protect,
-    authController.restrictTo('admin'),
-    userController.createUser,
-  );
+  .post(userController.createUser);
 
 router
   .route('/:id')
   .get(userController.getUser)
-  .patch(
-    authController.protect,
-    authController.restrictTo('admin'),
-    userController.updateUser,
-  )
-  .delete(
-    authController.protect,
-    authController.restrictTo('admin'),
-    userController.deleteUser,
-  );
+  .patch(userController.updateUser)
+  .delete(userController.deleteUser);
 
 module.exports = router;

@@ -5,14 +5,13 @@ const authController = require('./../controllers/authController');
 const router = express.Router({ mergeParams: true });
 // merge params allows access to params when coming from the tour routes
 
+// Require all users to be logged in to access review routes
+router.use(authController.protect);
+
 router
   .route('/')
-  .get(
-    authController.protect,
-    reviewController.getAllReviews,
-  )
+  .get(reviewController.getAllReviews)
   .post(
-    authController.protect,
     reviewController.setTourUserIds,
     authController.checkReviewer,
     reviewController.createReview,
@@ -20,14 +19,14 @@ router
 
 router
   .route('/:id')
-  .get(authController.protect, reviewController.getReview)
+  .get(reviewController.getReview)
   .patch(
-    authController.protect,
     reviewController.setTourUserIds,
+    authController.restrictTo('user', 'admin'),
+    authController.checkReviewer,
     reviewController.updateReview,
   )
   .delete(
-    authController.protect,
     authController.checkReviewer,
     reviewController.deleteReview,
   );
@@ -39,7 +38,6 @@ router
 router
   .route('/:tourId/reviews')
   .post(
-    authController.protect,
     reviewController.setTourUserIds,
     authController.checkReviewer,
     reviewController.createReview,
