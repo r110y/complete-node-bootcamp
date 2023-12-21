@@ -21,20 +21,16 @@ const reviewSchema = new mongoose.Schema(
       enum: [Date.now],
       select: false,
     },
-    author: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: User,
-        required: [true, 'A review must have an author'],
-      },
-    ],
-    tour: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: Tour,
-        required: [true, 'A review must belong to a tour'],
-      },
-    ],
+    author: {
+      type: mongoose.Schema.ObjectId,
+      ref: User,
+      required: [true, 'A review must have an author'],
+    },
+    tour: {
+      type: mongoose.Schema.ObjectId,
+      ref: Tour,
+      required: [true, 'A review must belong to a tour'],
+    },
   },
   {
     toJSON: { virtuals: true },
@@ -42,30 +38,10 @@ const reviewSchema = new mongoose.Schema(
   },
 );
 
-// // Populate tours with referenced data
-// tourSchema.pre(/^find/, function (next) {
-//   this.populate({
-//     path: 'guides',
-//     select: '-__v',
-//   });
-//   next();
-// });
-
 reviewSchema.pre(/^find/, function (next) {
-  // this.populate({
-  //   path: 'author',
-  //   select: 'name id photo',
-  // }).populate({
-  //   path: 'tour',
-  //   select: '-guides name',
-  // });
-
   this.populate({
     path: 'author',
     select: 'name photo author',
-  }).populate({
-    path: 'tour',
-    select: '-guides name difficulty photo',
   });
   next();
 });
