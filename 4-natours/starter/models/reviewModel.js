@@ -19,7 +19,6 @@ const reviewSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
       enum: [Date.now],
-      select: false,
     },
     author: {
       type: mongoose.Schema.ObjectId,
@@ -41,7 +40,7 @@ const reviewSchema = new mongoose.Schema(
 reviewSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'author',
-    select: 'name photo author',
+    select: 'name photo',
   });
   next();
 });
