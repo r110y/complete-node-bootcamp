@@ -63,6 +63,18 @@ app.use(
   }),
 );
 
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'", 'https:', 'data:', 'ws:'],
+      baseUri: ["'self'"],
+      fontSrc: ["'self'", 'https:', 'data:'],
+      scriptSrc: ["'self'", 'https:', 'blob:'],
+      styleSrc: ["'self'", 'https:', 'unsafe-inline'],
+    },
+  }),
+);
+
 // Test middlewares
 
 // app.use((req, res, next) => {
