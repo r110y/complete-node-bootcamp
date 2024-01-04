@@ -1,72 +1,76 @@
 /* eslint-disable */
 
-// ----------------------------------------------
-// Get locations from HTML
-// ----------------------------------------------
+document.addEventListener('DOMContentLoaded', function () {
+  // Retrieve location data
+  const locations = JSON.parse(
+    document.querySelector('#map').dataset.locations,
+  );
 
-const locations = JSON.parse(
-  document.getElementById('map').dataset.locations,
-);
+  // Get midpoint of tour locations
+  const getMidpoint = () => {
+    const latitudes = [];
+    const longitudes = [];
 
-// ----------------------------------------------
-// Create the map and attach it to the #map
-// ----------------------------------------------
+    locations.forEach((loc) => {
+      latitudes.push(loc.coordinates[1]);
+      longitudes.push(loc.coordinates[0]);
+    });
 
-const map = L.map('map', { zoomControl: false });
+    const sumLatitude = latitudes.reduce((acc, cur) => {
+      return acc + cur;
+    }, 0);
 
-// ----------------------------------------------
-// Add a tile layer to add to our map
-// ----------------------------------------------
+    const sumLongitude = longitudes.reduce((acc, cur) => {
+      return acc + cur;
+    }, 0);
 
-L.tileLayer(
-  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-  {
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-  },
-).addTo(map);
+    return [
+      sumLatitude / latitudes.length,
+      sumLongitude / longitudes.length,
+    ];
+  };
 
-// ----------------------------------------------
-// Create icon using the image provided by Jonas
-// ----------------------------------------------
+  const tourMidpoint = getMidpoint();
 
-var greenIcon = L.icon({
-  iconUrl: '/img/pin.png',
-  iconSize: [32, 40], // size of the icon
-  iconAnchor: [16, 45], // point of the icon which will correspond to marker's location
-  popupAnchor: [0, -50], // point from which the popup should open relative to the iconAnchor
+  console.log(tourMidpoint);
+
+  // Create and tile map
+  const map = L.map('map').setView(tourMidpoint, 11);
+
+  L.tileLayer(
+    'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    },
+  ).addTo(map);
+
+  // Create custom marker
+  const greenIcon = L.icon({
+    iconUrl: '/img/pin.png',
+    iconSize: [32, 40], // size of the icon
+    iconAnchor: [16, 45], // point of the icon which will correspond to marker's location
+    popupAnchor: [0, -50], // point from which the popup should open relative to the iconAnchor
+  });
+
+  // Create markers from location data
+  locations.forEach((loc) => {
+    L.marker([loc.coordinates[1], loc.coordinates[0]], {
+      icon: greenIcon,
+    })
+      .addTo(map)
+      .bindPopup(
+        `<p>Day ${loc.day}: ${loc.description}</p>`,
+        {
+          autoClose: false,
+          className: 'mapPopup',
+        },
+      )
+      .openPopup();
+  });
+
+  // Disable zoom
+  map.scrollWheelZoom.disable();
+
+  console.log(locations);
 });
-
-// ----------------------------------------------
-// Add locations to the map
-// ----------------------------------------------
-
-const points = [];
-locations.forEach((loc) => {
-  // Create points
-  points.push([loc.coordinates[1], loc.coordinates[0]]);
-
-  // Add markers
-  L.marker([loc.coordinates[1], loc.coordinates[0]], {
-    icon: greenIcon,
-  })
-    .addTo(map)
-    // Add popup
-    .bindPopup(
-      `<p>Day ${loc.day}: ${loc.description}</p>`,
-      {
-        autoClose: false,
-      },
-    )
-    .openPopup();
-});
-
-// ----------------------------------------------
-// Set map bounds to include current location
-// ----------------------------------------------
-
-const bounds = L.latLngBounds(points).pad(0.5);
-map.fitBounds(bounds);
-
-// Disable scroll on map
-map.scrollWheelZoom.disable();

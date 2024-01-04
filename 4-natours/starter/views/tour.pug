@@ -9,12 +9,13 @@ block append head
   script(src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
    integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
    crossorigin="")
+  script(src="./../js/leaflet.js")
 
 block content
   section.section-header
     .header__hero
       .header__hero-overlay &nbsp;
-      img.header__hero-img(src='/img/tour-5-cover.jpg', alt='Tour 5')
+      img.header__hero-img(src=`/img/tours/${tour.imageCover}`, alt='Tour 5')
 
     .heading-box
       h1.heading-primary

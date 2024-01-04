@@ -27,6 +27,29 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Set security HTTP Headers
 app.use(helmet());
 
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'", 'https:', 'data:', 'ws:'],
+      baseUri: ["'self'"],
+      fontSrc: ["'self'", 'https:', 'data:'],
+      imgSrc: ["'self'", 'https:', 'data:'],
+      scriptSrc: [
+        "'unsafe-inline'",
+        "'self'",
+        'https:',
+        'blob:',
+      ],
+      styleSrc: [
+        "'unsafe-inline'",
+        "'self'",
+        'https:',
+        'unsafe-inline',
+      ],
+    },
+  }),
+);
+
 // Development logging
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
@@ -60,18 +83,6 @@ app.use(
       'difficulty',
       'price',
     ],
-  }),
-);
-
-app.use(
-  helmet.contentSecurityPolicy({
-    directives: {
-      defaultSrc: ["'self'", 'https:', 'data:', 'ws:'],
-      baseUri: ["'self'"],
-      fontSrc: ["'self'", 'https:', 'data:'],
-      scriptSrc: ["'self'", 'https:', 'blob:'],
-      styleSrc: ["'self'", 'https:', 'unsafe-inline'],
-    },
   }),
 );
 
