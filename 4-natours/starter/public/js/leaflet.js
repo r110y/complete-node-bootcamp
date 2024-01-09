@@ -1,11 +1,7 @@
 /* eslint-disable */
+import 'leaflet';
 
-document.addEventListener('DOMContentLoaded', function () {
-  // Retrieve location data
-  const locations = JSON.parse(
-    document.querySelector('#map').dataset.locations,
-  );
-
+export const renderTourMap = function (locations) {
   // Get midpoint of tour locations
   const getMidpoint = () => {
     const latitudes = [];
@@ -31,8 +27,6 @@ document.addEventListener('DOMContentLoaded', function () {
   };
 
   const tourMidpoint = getMidpoint();
-
-  console.log(tourMidpoint);
 
   // Create and tile map
   const map = L.map('map').setView(tourMidpoint, 11);
@@ -71,6 +65,4 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Disable zoom
   map.scrollWheelZoom.disable();
-
-  console.log(locations);
-});
+};
