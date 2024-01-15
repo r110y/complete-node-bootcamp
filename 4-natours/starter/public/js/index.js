@@ -7,29 +7,19 @@ import { renderTourMap } from './leaflet';
 const loginForm = document.querySelector('.form');
 const map = document.querySelector('#map');
 
-// Log in form
-document.addEventListener(
-  'DOMContentLoaded',
-  async function () {
-    if (loginForm) {
-      loginForm.addEventListener('submit', (e) => {
-        e.preventDefault();
+// Values
+const email = document.getElementById('email').value;
+const password = document.getElementById('password').value;
 
-        const email =
-          document.getElementById('email').value;
-        const password =
-          document.getElementById('password').value;
+// Delegation
+if (loginForm) {
+  loginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    login(email, password);
+  });
+}
 
-        login(email, password);
-      });
-    }
-  },
-);
-
-// Map
-document.addEventListener('DOMContentLoaded', () => {
-  if (map) {
-    const locations = JSON.parse(map.dataset.locations);
-    renderTourMap(locations);
-  }
-});
+if (map) {
+  const locations = JSON.parse(map.dataset.locations);
+  renderTourMap(locations);
+}
