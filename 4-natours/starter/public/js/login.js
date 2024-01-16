@@ -1,5 +1,6 @@
 /* eslint-disable */
 import axios from 'axios';
+import { showAlert } from './alerts';
 
 export const login = async (email, password) => {
   try {
@@ -19,6 +20,6 @@ export const login = async (email, password) => {
       }, 1500);
     }
   } catch (err) {
-    alert(err.response.data.message);
+    showAlert('Error:', err.response.data.message);
   }
 };
