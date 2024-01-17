@@ -57,7 +57,7 @@ const sendErrorProd = (err, req, res) => {
     // Do not reveal unknown API errors in production
     return res.status(500).json({
       status: 'Error',
-      message: 'Something went wrong',
+      msg: 'HELLO WORLD',
     });
   }
   // B) For rendered site errors in production -- do not reveal unknown errors on site in production
@@ -77,6 +77,7 @@ module.exports = (err, req, res, next) => {
     sendErrorDev(err, req, res);
   } else if (process.env.NODE_ENV === 'production') {
     let error = { ...err };
+    error.message = err.message;
 
     if (error.name === 'CastError')
       error = handleCastErrorDB(error);
