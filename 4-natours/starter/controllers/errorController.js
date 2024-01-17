@@ -27,33 +27,44 @@ const handleJWTError = () =>
     401,
   );
 
-const sendErrorDev = (err, res) => {
-  res.status(err.statusCode).json({
-    status: err.status,
-    error: err,
-    message: err.message,
-    stack: err.stack,
+const sendErrorDev = (err, req, res) => {
+  // A) API
+  if (req.originalUrl.startsWith('/api')) {
+    return res.status(err.statusCode).json({
+      status: err.status,
+      error: err,
+      message: err.message,
+      stack: err.stack,
+    });
+  }
+  // B) Rendered website
+  return res.status(err.statusCode).render('error', {
+    title: 'Something went wrong',
+    msg: err.message,
   });
 };
 
-const sendErrorProd = (err, res) => {
-  // Operational, trusted: send message to client
-  if (err.isOperational) {
-    res.status(err.statusCode).json({
-      status: err.status,
-      message: err.message,
-    });
-    // Programming or other unknown error: don't leak details to client.
-  } else {
-    // 1) log error
-    // console.error('--- ERROR --- :', err);
+const sendErrorProd = (err, req, res) => {
+  // A) For API errors in production
+  if (req.originalUrl.startsWith('/api')) {
+    if (err.isOperational) {
+      return res.status(err.statusCode).json({
+        status: err.status,
+        message: err.message,
+      });
+    }
 
-    // 2) Send generic message
-    res.status(500).json({
+    // Do not reveal unknown API errors in production
+    return res.status(500).json({
       status: 'Error',
-      message: err._message,
+      message: 'Something went wrong',
     });
   }
+  // B) For rendered site errors in production -- do not reveal unknown errors on site in production
+  res.status(err.statusCode).render('error', {
+    title: 'Something went wrong',
+    msg: err.message,
+  });
 };
 
 module.exports = (err, req, res, next) => {
@@ -63,7 +74,7 @@ module.exports = (err, req, res, next) => {
   err.status = err.status || 'error';
 
   if (process.env.NODE_ENV === 'development') {
-    sendErrorDev(err, res);
+    sendErrorDev(err, req, res);
   } else if (process.env.NODE_ENV === 'production') {
     let error = { ...err };
 
@@ -80,6 +91,6 @@ module.exports = (err, req, res, next) => {
       error = handleJWTError(error);
     }
 
-    sendErrorProd(error, res);
+    sendErrorProd(error, req, res);
   }
 };

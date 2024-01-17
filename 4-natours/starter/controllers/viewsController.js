@@ -23,13 +23,6 @@ exports.getTour = catchAsync(async (req, res, next) => {
     fields: 'review rating user',
   });
 
-  if (!tour) {
-    res.status(200).render('error', { title: 'Not found' });
-    return next(
-      new AppError(404, 'No tour found by that name'),
-    );
-  }
-
   res.status(200).render('tour', {
     title: `${tour.name} Tour`,
     tour,
