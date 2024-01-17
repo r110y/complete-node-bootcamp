@@ -26753,7 +26753,7 @@ var _leaflet = require("./leaflet");
 /* eslint-disable */
 
 // DOM elements
-var loginForm = document.querySelector('.form');
+var loginForm = document.querySelector('.form--login');
 var map = document.querySelector('#map');
 var logOutBtn = document.querySelector('.nav__el--logout');
 
@@ -26798,7 +26798,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53203" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63958" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
