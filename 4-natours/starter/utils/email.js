@@ -54,4 +54,8 @@ module.exports = class Email {
   async sendWelcome() {
     await this.send('welcome', 'Welcome Aboard!');
   }
+
+  async sendPasswordReset() {
+    await this.send('resetPassword', 'Reset your password');
+  }
 };
