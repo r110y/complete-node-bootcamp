@@ -3,6 +3,7 @@ import '@babel/polyfill';
 import { login, logout } from './login';
 import { renderTourMap } from './leaflet';
 import { updateSettings } from './updateSettings';
+import { bookTour } from './stripe';
 
 // DOM elements
 const loginForm = document.querySelector('.form--login');
@@ -16,6 +17,7 @@ const userDataForm = document.querySelector(
 const userPasswordForm = document.querySelector(
   '.form-user-password',
 );
+const bookBtn = document.getElementById('book-tour');
 
 // Values
 
@@ -23,6 +25,7 @@ const userPasswordForm = document.querySelector(
 if (loginForm) {
   loginForm.addEventListener('submit', (e) => {
     e.preventDefault();
+    console.log('this is executing...');
     const email = document.getElementById('email').value;
     const password =
       document.getElementById('password').value;
@@ -91,3 +94,10 @@ if (userPasswordForm) {
     ).textContent = 'Save Password';
   });
 }
+
+if (bookBtn)
+  bookBtn.addEventListener('click', (e) => {
+    e.target.textContent = 'Processing...';
+    const { tourId } = e.target.dataset;
+    bookTour(tourId);
+  });
