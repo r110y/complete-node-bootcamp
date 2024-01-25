@@ -2,7 +2,7 @@ extends base
 
 mixin navItem(link, text, icon, active)
   li(class=`${active ? 'side-nav--active' : ''}`)
-    a(href='#')
+    a(href=`${link}`)
       svg
         use(xlink:href=`img/icons.svg#icon-${icon}`)
       | #{text}
@@ -13,7 +13,7 @@ block content
       nav.user-view__menu
         ul.side-nav
           +navItem('#', 'Settings', 'settings', true)
-          +navItem('#', 'My bookings', 'briefcase', true)
+          +navItem('/my-tours', 'My bookings', 'briefcase', true)
           +navItem('#', 'My reviews', 'star', true)
           +navItem('#', 'Billing', 'credit-card', true)
 
@@ -24,7 +24,7 @@ block content
               +navItem('#', 'Manage tours', 'map', true)
               +navItem('#', 'Manage users', 'users', true)
               +navItem('#', 'Manage reviews', 'star', true)
-              +navItem('#', 'Manage bookings', 'briefcase', true)
+              +navItem('/my-tours', 'Manage bookings', 'briefcase', true)
 
       .user-view__content
         .user-view__form-container
